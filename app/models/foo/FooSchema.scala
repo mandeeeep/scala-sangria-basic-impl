@@ -9,6 +9,6 @@ class FooSchema {
 
   implicit val fooType = deriveObjectType[Unit, Foo](ObjectTypeName("Foo"))
 
-  val fooFields = fields[FooRepo, Unit](Field("Foos", ListType(fooType), resolve = c ⇒ c.ctx.getAllFoo))
+  val fooFields = fields[FooBarRepo, Unit](Field("Foos", ListType(fooType), resolve = c ⇒ c.ctx.fooRepo.getAllFoo))
 
 }

@@ -38,7 +38,7 @@ object HomeController extends Controller {
         Logger.info("Query is valid.")
         Executor.execute(fooBarS.schema,
           queryAst,
-          root,
+          userContext = root,
           variables = variables getOrElse Json.obj(),
           operationName = operation)
           .map(
