@@ -1,5 +1,7 @@
 package models
 
+import javax.inject.Inject
+
 import sangria.macros.derive.{ObjectTypeDescription, ObjectTypeName, deriveObjectType}
 import sangria.schema.{Field, ListType, ObjectType, OptionType, Schema, fields}
 import playJson._
@@ -10,7 +12,7 @@ import models.bar.BarSchema
 /**
   * Created by mandeep on 11/7/17.
   */
-class FooBarSchema(fooSchema: FooSchema, barSchema: BarSchema) {
+class FooBarSchema @Inject() (fooSchema: FooSchema, barSchema: BarSchema) {
 
   import fooSchema._
   import barSchema._

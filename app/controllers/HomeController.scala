@@ -18,7 +18,7 @@ import scala.util.{Failure, Success}
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
-object HomeController extends Controller {
+class HomeController @Inject() (fooBarRepo: FooBarRepo, fooBarSchema: FooBarSchema)  extends Controller {
 
   def index = Action.async(parse.json) { request =>
 
@@ -30,15 +30,13 @@ object HomeController extends Controller {
       case obj: JsObject ⇒ Some(obj)
       case _ ⇒ None
     }
-    val fooBarS = new FooBarSchema(new FooSchema, new BarSchema)
-    val root = new FooBarRepo(new FooRepo, new BarRepo)
 
     QueryParser.parse(query) match {
       case Success(queryAst) => {
         Logger.info("Query is valid.")
-        Executor.execute(fooBarS.schema,
+        Executor.execute(fooBarSchema.schema,
           queryAst,
-          userContext = root,
+          userContext = fooBarRepo,
           variables = variables getOrElse Json.obj(),
           operationName = operation)
           .map(
