@@ -4,16 +4,7 @@ import models.foo.FooRepo
 import models.bar.BarRepo
 
 
-class BaseRepo(fooRepo: FooRepo, barRepo: BarRepo) {
-}
-
-trait RepoCollection {
-  lazy val fooRepo = new FooRepo()
-  lazy val barRepo = new BarRepo()
-}
-
-class DummyMergedRepository extends RepoCollection {
-  lazy val bakery = new BaseRepo(fooRepo, barRepo)
+class FooBarRepo(fooRepo: FooRepo, barRepo: BarRepo) {
 
   import fooRepo._
   import barRepo._

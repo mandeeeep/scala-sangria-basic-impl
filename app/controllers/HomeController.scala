@@ -30,13 +30,13 @@ object HomeController extends Controller {
       case obj: JsObject ⇒ Some(obj)
       case _ ⇒ None
     }
-    val dummySchema = new FooBarSchema(new FooSchema, new BarSchema)
-    val root = new DummyMergedRepository(new FooRepo, new BarRepo)
+    val fooBarS = new FooBarSchema(new FooSchema, new BarSchema)
+    val root = new FooBarRepo(new FooRepo, new BarRepo)
 
     QueryParser.parse(query) match {
       case Success(queryAst) => {
         Logger.info("Query is valid.")
-        Executor.execute(dummySchema.schema,
+        Executor.execute(fooBarS.schema,
           queryAst,
           root,
           variables = variables getOrElse Json.obj(),

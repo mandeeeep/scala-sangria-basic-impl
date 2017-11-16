@@ -1,6 +1,6 @@
 package models.bar
 
-import models.DummyMergedRepository
+import models.FooBarRepo
 import sangria.macros.derive.{ObjectTypeName, deriveObjectType}
 import sangria.schema.{Field, ListType, ObjectType, fields}
 
