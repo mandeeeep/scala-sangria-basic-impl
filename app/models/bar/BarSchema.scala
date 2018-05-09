@@ -8,6 +8,6 @@ class BarSchema {
 
   implicit val barType = deriveObjectType[Unit, Bar](ObjectTypeName("Bar"))
 
-  val barFields = fields[FooBarRepo, Unit](Field("Bars", ListType(barType), resolve = c ⇒ c.ctx.barRepo.getAllBar))
+  val barFields = fields[FooBarRepo, Unit](Field("bars", ListType(barType), resolve = c ⇒ c.ctx.barRepo.getAllBar))
 
 }
