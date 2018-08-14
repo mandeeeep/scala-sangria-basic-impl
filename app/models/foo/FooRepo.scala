@@ -11,6 +11,15 @@ class FooRepo {
     Seq(Foo("1", Some("FooA"), "BarA"))
   }
 
+  def fooCheck(x: Boolean): FooCheck = {
+    println("FooCheck Called....")
+    if(x == true){
+      FooCheck(1)
+    }else{
+      FooCheck(0)
+    }
+  }
+
 }
 
 

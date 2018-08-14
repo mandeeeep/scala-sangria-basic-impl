@@ -15,12 +15,14 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-class HomeBatchController @Inject()(fooBarRepo: FooBarRepo, fooBarSchema: FooBarSchema)  extends Controller {
+import sangria.execution.ExecutionScheme.Stream
+
+class HomeBatchController @Inject()(fooBarRepo: FooBarRepo, fooBarSchema: FooBarBatchSchema)  extends Controller {
 
   def index = Action.async(parse.json) { request =>
 
     val query = (request.body \ "query").as[String]
-    val operation = (request.body \ "operations").asOpt[Seq[String]]
+    val operation = (request.body \ "operationNames").asOpt[Seq[String]]
 
     val variables = (request.body \ "variables").toOption.flatMap {
       case JsString(vars) ⇒ Some(if (vars.trim == "" || vars.trim == "null") Json.obj() else Json.parse(vars).as[JsObject])
