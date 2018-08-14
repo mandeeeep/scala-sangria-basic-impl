@@ -3,7 +3,7 @@ Basic sangria implementation
 
 ---------
 
-
+```json
 {
 	"variables":{
 		"a":true
@@ -11,3 +11,4 @@ Basic sangria implementation
 	"operationNames":["Some","Somen"],
 	"query":" query Some($a: Boolean!){foos_check(y: $a){y @export(as: \"vr\")}} query Somen{bars_check(x:$vr){x}} "
 }
+```
