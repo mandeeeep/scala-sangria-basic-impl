@@ -15,4 +15,20 @@ class BarRepo {
     }
   }
 
+  def barCheck2(z: Option[Int]): BarCheck = {
+    println("BarCheck Called....")
+    val x = z.getOrElse(0)
+    if(x == 1){
+      BarCheck(true)
+    }else{
+      BarCheck(false)
+    }
+  }
+
+  def barTopperInsert(bt: Option[BarTopper]): BarCheck = {
+    println("BarTopper Called....")
+    val d = bt
+    BarCheck(false)
+  }
+
 }
