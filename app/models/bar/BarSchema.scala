@@ -10,6 +10,8 @@ class BarSchema {
 
   val x = Argument("x", IntType, description = "")
 
+  val id = Argument("id", StringType, description = "")
+
   val z = Argument("z", OptionInputType(IntType), description = "")
 
   val btInput = Argument("bt", (barTopperInputJsType), description = "")
@@ -28,16 +30,6 @@ class BarSchema {
     List(
       InputField("x", OptionInputType(BooleanType), description = ("")),
       InputField("y", OptionInputType(StringType), description = (""))
-    )
-  )
-
-  lazy val barTopperInputType = InputObjectType[BarTopper](
-    "BarTopperInput",
-    "A add account input type.",
-    List(
-      InputField("a", OptionInputType(BooleanType), description = ("")),
-      InputField("b", OptionInputType(StringType), description = ("")),
-        InputField("c", OptionInputType(StringType), description = (""))
     )
   )
 
@@ -65,17 +57,21 @@ class BarSchema {
         val x = z
         c.ctx.barRepo.barCheck2(c arg x)
       }
-    ),
+    )
+  )
+
+  var barInputFields = fields[FooBarRepo, Unit](
     Field(
       "bars_topper_insert",
       barCheckType,
-      arguments = btInput :: Nil,
+      arguments = btInput :: id :: Nil,
       description = Some(""),
       resolve = c => {
+        val d = c
         val x = btInput
-        val d = c.arg(x)
-        println(d)
-        c.ctx.barRepo.barTopperInsert(None)
+        val e = c.arg(x)
+        println(c arg id)
+        c.ctx.barRepo.barTopperInsert(c arg id,None)
       }
     )
   )

@@ -19,8 +19,9 @@ class FooBarSchema @Inject() (fooSchema: FooSchema, barSchema: BarSchema) {
   import barSchema._
 
   val query = ObjectType("Query", barFields ++ fooFields)
+  val mutation = ObjectType("Mutation", barInputFields)
 
-  val schema = Schema(query)
-  val batchSchema = Schema(query, directives = BuiltinDirectives :+ BatchExecutor.ExportDirective)
+  val schema = Schema(query,mutation = Some(mutation))
+  val batchSchema = Schema(query,mutation = Some(mutation), directives = BuiltinDirectives :+ BatchExecutor.ExportDirective)
 
 }

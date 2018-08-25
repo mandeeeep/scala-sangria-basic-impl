@@ -25,7 +25,7 @@ class BarRepo {
     }
   }
 
-  def barTopperInsert(bt: Option[BarTopper]): BarCheck = {
+  def barTopperInsert(id: String, bt: Option[BarTopper]): BarCheck = {
     println("BarTopper Called....")
     val d = bt
     BarCheck(false)
