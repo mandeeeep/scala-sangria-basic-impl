@@ -6,7 +6,7 @@ import models.playJson._
 import play.api._
 import play.api.libs.json._
 import play.api.mvc._
-import sangria.execution.Executor
+import sangria.execution.{ErrorWithResolver, Executor, QueryAnalysisError}
 import sangria.parser.{QueryParser, SyntaxError}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -27,44 +27,35 @@ class BatchController @Inject()(fooBarRepo: FooBarRepo, fooBarSchema: FooBarSche
             variables = vars getOrElse Json.obj(),
             operationName = oprs)
             .map { resp =>
-
-              //val response = resp
-              val response: JsValue = (resp \ "data").as[JsValue]
-
-              oprs match {
-                case Some(operation) => {
-                  Json.obj(operation-> response)
-                }
-                case None => {
-                  response
-                }
-              }
+              resp
             }
             .recover {
+              case error: QueryAnalysisError => {
+                Logger.info("QueryAnalysisError occured...")
+                Json.toJson(error.resolveError)
+              }
+              case error: ErrorWithResolver => {
+                Logger.info("ErrorWithResolver occured...")
+                Json.toJson(error.resolveError)
+              }
               case error: Exception => {
                 Logger.info("Error occured...")
-                oprs match {
-                  case Some(operation) => {
-                    Json.obj(operation-> error.getMessage)
-                  }
-                  case None => {
-                    (JsString(error.getMessage))
-                  }
-                }
+                Json.toJson(error.getMessage)
               }
             }
         }
         case Failure(error: SyntaxError) => {
           Logger.info("Invalid query supplied.")
-          oprs match {
-            case Some(operation) => {
-              Future(Json.obj(operation-> error.getMessage))
-            }
-            case None => {
-              Future(JsString(error.getMessage))
-            }
-          }
+          Future.successful((Json.obj(
+            "syntaxError" → error.getMessage,
+            "locations" → Json.arr(Json.obj(
+              "line" → error.originalError.position.line,
+              "column" → error.originalError.position.column)))))
         }
+//        case Failure(error) => {
+//          Future.successful((Json.obj(
+//            "syntaxError" → error.getMessage)))
+//        }
       }
     }
 
@@ -76,13 +67,11 @@ class BatchController @Inject()(fooBarRepo: FooBarRepo, fooBarSchema: FooBarSche
           case _ ⇒ None
         }
 
-        val operation = (request.body \ "operationName").asOpt[String]
-
         val futuras: Seq[Future[JsValue]] = gqlReq.map(x => aligator(vars = treatVars(x.variables), oprs = x.operationName, qrs = x.query))
         val batchFuturas: Future[Seq[JsValue]] = Future.sequence(futuras)
 
         batchFuturas.map { batchResponses =>
-          Ok(Json.obj("data"->JsArray(batchResponses)))
+          Ok(JsArray(batchResponses))
         }
       }
       case None => {
